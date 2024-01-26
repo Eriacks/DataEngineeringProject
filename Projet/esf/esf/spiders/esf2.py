@@ -1,5 +1,6 @@
 import scrapy
 from pymongo import MongoClient
+import re
 
 
 class Esf2Spider(scrapy.Spider):
@@ -19,16 +20,21 @@ class Esf2Spider(scrapy.Spider):
         categories = []
         
         for tr in response.css('table.table-striped > tbody > tr'):
-            # On essaye de récupérer le texte du département, s'il n'y en a pas, on met une chaîne vide
+            # On essaye de récupérer la categorie, s'il n'y en a pas, on met une chaîne vide
             categorie = tr.css('td:nth-child(4)::text').get(default='').strip()
             categories.append(categorie)
             
         
         departements = []
         for tr in response.css('table.table-striped > tbody > tr'):
-            # On essaye de récupérer le texte du département, s'il n'y en a pas, on met une chaîne vide
-            departement = tr.css('td:nth-child(6)::text').get(default='').strip()
-            departements.append(departement)
+            # On essaye de récupérer du département, s'il n'y en a pas, on met une chaîne vide
+            departement_text = tr.css('td:nth-child(6)::text').get(default='').strip()
+            # On utilise une expression régulière pour vérifier si c'est un nombre
+            if re.match(r'^\d+$', departement_text):
+                departements.append(departement_text)
+            else:
+                # Si ce n'est pas un nombre, on ajoute une chaîne vide
+                departements.append('')
 
         
         classement_global = []
