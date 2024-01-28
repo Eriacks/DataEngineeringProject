@@ -62,7 +62,7 @@ class Esf1Spider(scrapy.Spider):
         }
 
         # Insertion du document dans la collection MongoDB
-        client = MongoClient()
+        client = MongoClient('localhost', 27017)
         db = client['esf']
         collection = db['ecoles']
         collection.insert_one(document)
