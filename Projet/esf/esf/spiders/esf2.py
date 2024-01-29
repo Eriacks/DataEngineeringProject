@@ -6,8 +6,35 @@ import re
 class Esf2Spider(scrapy.Spider):
     name = "esf2"
     allowed_domains = []
-    start_urls = ["https://technique.clubesf.com/resultat/ajax_classement_load.php?categ=&sexe=&an_inf=&an_sup=&point_inf=&point_sup=&nation=&cp=&nom=&prenom=&page=25&index=0&page=5000&total=105922&_=1706021334267"]
+    
+    def start_requests(self):
+        base_url = "https://technique.clubesf.com/resultat/ajax_classement_load.php"
+        query_params = {
+            'categ': '',
+            'sexe': '',
+            'an_inf': '',
+            'an_sup': '',
+            'point_inf': '',
+            'point_sup': '',
+            'nation': '',
+            'cp': '',
+            'nom': '',
+            'prenom': '',
+            'page': '25',
+            'index': 0,  # Ce paramètre sera incrémenté
+            'page': '5000',
+            'total': '105922',
+            '_': '1706021334267'
+        }
+        
+        index_max = 65000 # Sur le site, on peut voir qu'il y a uniquement 69000 skieurs classé. On pourrais récuperer ce nombre automatiquement, mais ce n'est pas très important ici.
+        step = 5000
 
+        for index in range(0, index_max + 1, step):
+            query_params['index'] = str(index)
+            url = f"{base_url}?{'&'.join([f'{k}={v}' for k, v in query_params.items()])}"
+            yield scrapy.Request(url, self.parse)
+    
     def parse(self, response):
 
         noms = [nom.get() for nom in response.css("a::text")[1::2]]
