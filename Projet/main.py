@@ -1,23 +1,28 @@
 import subprocess
 import os
-from flask import Flask
-
 import dash
-from dash import dcc, html
+from dash import html, dcc
 import re
 from dash.dependencies import Input, Output
 import plotly.express as px
 import pandas as pd
 from pymongo import MongoClient
 from geopy.geocoders import Nominatim
-import matplotlib.pyplot as plt
-from ast import literal_eval
+
+def run_scrapy_spider():
+    spider_path = os.path.abspath("esf/esf/spiders")
+    command = f"cd {spider_path} && scrapy runspider esf1.py"
+
+    try:
+        subprocess.run(command, shell=True, check=True)
+    except subprocess.CalledProcessError as e:
+        print(f"Erreur lors de l'exécution de l'araignée Scrapy : {e}")
+
 
 # Connexion à la base de données MongoDB
 client = MongoClient('localhost', 27017)
 db = client['esf']
 collection = db['ecoles']
-
 
 def getNumbers(s):
     # Extract all numbers from the string and return as a list
@@ -58,10 +63,10 @@ def create_histo_km_piste(df):
     # Convertir la colonne 'km_piste' en type numérique
     df['km_piste'] = pd.to_numeric(df['km_piste'], errors='coerce')
 
-    fig = px.histogram(df, x='km_piste', nbins=20,
+    fig = px.histogram(df, x='km_piste', nbins=50,
                        title="Histogramme du Nombre de Kilomètres de Piste",
                        labels={'km_piste': "Nombre de Kilomètres de Piste", 'count': 'Fréquence'},
-                       color_discrete_sequence=['blue'])
+                       color_discrete_sequence=['skyblue'])
 
     # Affichage de l'histogramme
     return fig
@@ -76,7 +81,7 @@ def create_histo_snowparks(df):
     fig = px.histogram(df, x='snowparks', nbins=20,
                        title="Histogramme du Nombre de Snowparks",
                        labels={'snowparks': "Nombre de Snowparks", 'count': 'Fréquence'},
-                       color_discrete_sequence=['blue'])
+                       color_discrete_sequence=['skyblue'])
 
     return fig
 
@@ -87,17 +92,17 @@ def create_histo_remonte(df):
     # Convertir la colonne 'km_piste' en type numérique
     df['remonte'] = pd.to_numeric(df['remonte'], errors='coerce')
 
-    fig = px.histogram(df, x='remonte', nbins=20,
+    fig = px.histogram(df, x='remonte', nbins=50,
                        title="Histogramme du Nombre de remontées mécaniques",
                        labels={'remonte': "Nombre de remontées mécaniques", 'count': 'Fréquence'},
-                       color_discrete_sequence=['blue'])
+                       color_discrete_sequence=['skyblue'])
 
     return fig
 
 
 def create_histo_moni(df):
     # Création de l'histogramme avec Plotly Express
-    fig = px.histogram(df, x='Nombre de moniteurs', nbins=20,
+    fig = px.histogram(df, x='Nombre de moniteurs', nbins=50,
                        title="Histogramme du Nombre de Moniteurs",
                        labels={'Nombre de moniteurs': "Nombre de Moniteurs", 'count': 'Fréquence'},
                        color_discrete_sequence=['skyblue'])
@@ -105,10 +110,10 @@ def create_histo_moni(df):
     return fig
 
 def create_histo_moni_anglais(df):
-    fig = px.histogram(df, x='Nombre de moniteurs parlant anglais', nbins=20,
+    fig = px.histogram(df, x='Nombre de moniteurs parlant anglais', nbins=50,
                        title='Histogramme du Nombre de Moniteurs parlant anglais',
-                       labels={'Nombre de moniteurs parlant anglais': 'Nombre de Moniteurs',
-                               'count': 'Fréquence'})
+                       labels={'Nombre de moniteurs parlant anglais': 'Nombre de Moniteurs', 'count': 'Fréquence'},
+                       color_discrete_sequence = ['red  '])
     return fig
 
 # Fonction pour obtenir les coordonnées (latitude, longitude) d'une adresse
@@ -125,19 +130,7 @@ def map():
     df['Latitude'], df['Longitude'] = zip(*df['Adresse'].apply(get_coordinates))
     print(df.isna().sum())
 
-def run_scrapy_spider():
-    spider_path = os.path.abspath("esf/esf/spiders")
-    command = f"cd {spider_path} && scrapy runspider esf1.py"
-
-    try:
-        subprocess.run(command, shell=True, check=True)
-    except subprocess.CalledProcessError as e:
-        print(f"Erreur lors de l'exécution de l'araignée Scrapy : {e}")
-
-
-
-# Initialiser l'application Dash
-app = dash.Dash(__name__)
+app = dash.Dash(__name__, suppress_callback_exceptions=True)
 
 df_moni = dataFrame_moniteurs()
 df_info = dataFrame_infoStation()
@@ -156,53 +149,81 @@ app.layout = html.Div([
     html.Div([
         # Your main content goes here
         dcc.Location(id='url', refresh=False),
-        html.Div(id='page-content')
-    ], style={'marginLeft': '20%', 'padding': '20px'}),
+        html.Div(id='page-content', style={'padding': '20px'})
+    ], style={'marginLeft': '20%'}),
 
     # Tabs for Ecoles page
     dcc.Tabs(
         id='ecoles-tabs',
         value='tab-1',
         children=[
-            dcc.Tab(label='Tab 1', value='tab-1'),
-            dcc.Tab(label='Tab 2', value='tab-2'),
-        ]
+            dcc.Tab(label='Moniteurs', value='tab-1'),
+            dcc.Tab(label='Kilomètres de Piste', value='tab-2'),
+            dcc.Tab(label='Remontées Mécaniques', value='tab-3'),
+            dcc.Tab(label='Snowparks', value='tab-4'),
+        ],
+        style={'marginTop': '20px', 'marginLeft': '20%'}
     ),
+    html.Div([
+        dcc.Checklist(
+            id='checkbox-moniteurs-anglais',
+            options=[
+                {'label': 'Moniteurs parlant anglais', 'value': 'anglais'}
+            ],
+            value=[],
+            labelStyle={'display': 'block'}
+        )
+    ], style={'position': 'fixed', 'bottom': '350px', 'right': '20px'}),
+
     # Tab content for Ecoles page
-    html.Div(id='ecoles-tabs-content')
+    html.Div(id='ecoles-tabs-content', style={'marginLeft': '20%'})  # Adjust the style here
 ])
 
+# Callback pour afficher/cacher la Checklist en fonction de l'onglet sélectionné
+@app.callback(
+    Output('checkbox-moniteurs-anglais', 'style'),
+    [Input('ecoles-tabs', 'value')]
+)
+def update_checkbox_visibility(selected_tab):
+    if selected_tab == 'tab-1':
+        return {'position': 'fixed', 'bottom': '350px', 'right': '20px', 'display': 'block'}
+    else:
+        return {'display': 'none'}
+
+# Callback to update the page content and tab content based on the URL and selected tab
 # Callback to update the page content and tab content based on the URL and selected tab
 @app.callback(
-    [dash.dependencies.Output('page-content', 'children'),
-     dash.dependencies.Output('ecoles-tabs-content', 'children')],
-    [dash.dependencies.Input('url', 'pathname'),
-     dash.dependencies.Input('ecoles-tabs', 'value')]
+    Output('ecoles-tabs-content', 'children'),
+    [Input('ecoles-tabs', 'value'),
+     Input('checkbox-moniteurs-anglais', 'value')]
 )
-def display_content(pathname, selected_tab):
-    if pathname == '/ecoles':
-        # Tab content for Ecoles page
-        tab_content = update_ecoles_tab(selected_tab)
-        return html.Div(tab_content), tab_content
-    elif pathname == '/classement':
-        return html.H1('Classement Page'), None
-    else:
-        return html.H1('Home Page'), None
+def update_ecoles_tab(selected_tab, checkbox_value):
+    if not checkbox_value:  # Si la checklist n'est pas cochée, affichez le graphique par défaut
+        if selected_tab == 'tab-1':
+            return dcc.Graph(figure=create_histo_moni(df_moni))
+        elif selected_tab == 'tab-2':
+            return dcc.Graph(figure=create_histo_km_piste(df_info))
+        elif selected_tab == 'tab-3':
+            return dcc.Graph(figure=create_histo_remonte(df_info))
+        elif selected_tab == 'tab-4':
+            return dcc.Graph(figure=create_histo_snowparks(df_info))
+    else:  # Si la checklist est cochée, affichez le graphique des moniteurs parlant anglais seulement si l'onglet est 'tab-1'
+        if selected_tab == 'tab-1':
+            return dcc.Graph(figure=create_histo_moni_anglais(df_moni))
+        elif selected_tab == 'tab-2':
+            return dcc.Graph(figure=create_histo_km_piste(df_info))
+        elif selected_tab == 'tab-3':
+            return dcc.Graph(figure=create_histo_remonte(df_info))
+        elif selected_tab == 'tab-4':
+            return dcc.Graph(figure=create_histo_snowparks(df_info))
 
-# Function to update the tab content based on the selected tab
-def update_ecoles_tab(selected_tab):
-    if selected_tab == 'tab-1':
-        # Replace with your graph 1 component
-        return dcc.Graph(figure=create_histo_moni(df_moni))
-    elif selected_tab == 'tab-2':
-        # Replace with your graph 2 component
-        return dcc.Graph(figure=create_histo_snowparks(df_info))
-    else:
-        return html.H1('Invalid Tab')
+
 
 if __name__ == "__main__":
     #run_scrapy_spider()
     app.run_server(debug=True)
+
+
 
 
 
