@@ -1,0 +1,44 @@
+version: '3'
+
+services:
+  mongodb:
+    image: mongo
+    ports:
+      - "27017:27017"
+    container_name : mongodb
+    restart: always
+# mongo doit toujours etre en utilisation pour scrapy
+
+# premiere spider scrappant les ecoles esf
+  scrapy_spider:
+    build:
+      context: ./scrapy_project 
+      dockerfile: Dockerfile_scrapy
+# execute le dockerfile du fichier contenant la spider
+    depends_on:
+      - mongodb
+#a besoin de mongo pour se lancer
+
+#seconde spider scrappant le classement esf
+  scrapy_spider2:
+    build:
+      context: ./scrapy_project2
+#execute le dockerfile du fichier contenant la spider
+      dockerfile: Dockerfile_scrapy
+    depends_on:
+      - mongodb
+#a besoin de mongo pour se lancer
+
+#application dash
+  dash_app:
+    build:
+      context: ./dash_app
+      dockerfile: Dockerfile_dash
+#execute le dockerfile du fichier contenant l'application
+    ports:
+      - "8050:8050"
+#disponible au port 8050
+    depends_on:
+      - scrapy_spider
+      - scrapy_spider2
+# a besoin des 2 spiders finies pour se lancer

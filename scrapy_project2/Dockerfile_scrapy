@@ -1,0 +1,16 @@
+FROM python:3.8
+
+WORKDIR /app
+
+# requirements nécessaires pour scrapy
+COPY requirements.txt .
+
+# spider
+COPY esf.py .
+
+
+# installer les requirements
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Commande pour exécuter le script Python qui lance les araignées
+CMD ["scrapy", "runspider", "esf.py"]
