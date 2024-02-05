@@ -6,28 +6,33 @@ Cette étude analyse les données relatives aux écoles de ski et au classement 
 
 Les données extraites sur les écoles de ski sont les suivantes :
 
-Nom: Nom de l'école de ski.
-Nombre de moniteurs: Nombre total de moniteurs dans l'école.
-Nombre de moniteurs parlant anglais: Nombre de moniteurs parlant anglais dans l'école.
-Informations de la station: Informations sur la station de ski associée à l'école.
-Avantages de l'école: Avantages spécifiques de l'école.
-Disciplines: Disciplines enseignées par l'école.
-Adresse: Adresse physique de l'école.
-Téléphone: Numéro de téléphone de l'école.
+| Donnée | Description |
+| ------ | ------ |
+| Nom | Nom de l’école de ski |
+| Nombre de moniteurs | Nombre total de moniteurs dans l’école |
+| Nombre de moniteurs parlant anglais | Nombre de moniteurs parlant anglais dans l’école |
+| Informations de la station | Informations sur la station de ski associée à l’école |
+| Avantages de l’école | Avantages spécifiques de l’école |
+| Disciplines | Disciplines enseignées par l’école |
+| Adresse | Adresse physique de l’école |
+| Téléphone | Numéro de téléphone de l’école |
 
-Les données extraites sur les classements des skieurs sont les suivantes :
 
-ID: Identifiant du skieur.
-Nom: Nom du skieur.
-Sexe: Sexe du skieur.
-Catégorie: Catégorie à laquelle appartient le skieur.
-Nationalité: Nationalité du skieur.
-Département: Département associé au skieur.
-Point: Nombre de points du skieur.
-Classement global: Classement général du skieur.
-Classement dans la catégorie: Classement du skieur dans sa catégorie.
-Classement national: Classement national du skieur.
-Classement départemental: Classement départemental du skieur.
+Et les données extraites sur les classements des skieurs sont les suivantes :
+
+| Donnée | Description |
+| ------ | ------ |
+| ID | Identifiant du skieur |
+|Nom | Nom du skieur |
+|Sexe | Sexe du skieur |
+|Catégorie | Catégorie à laquelle appartient le skieur |
+|Nationalité | Nationalité du skieur |
+|Département | Département associé au skieur |
+|Point | Nombre de points du skieur |
+|Classement global | Classement général du skieur |
+|Classement dans la catégorie | Classement du skieur dans sa catégorie |
+|Classement national | Classement national du skieur |
+|Classement départemental | Classement départemental du skieur |
 
 
 ## User Guide
@@ -59,6 +64,42 @@ Si cela ne fonctionne pas la première fois, il y a peut-être eu une erreur du 
 
 
 ##  Rapport d’analyse
+
+
+### Section "Ecoles"
+
+#### "Moniteurs"
+
+Dans l'onglet "Moniteurs", on peut observer que la grande majorité des stations de ski compte moins de 70 moniteurs, et la section la plus représentées est "entre 10 et 20 moniteurs". On peut aussi observer qu'il y a très peu de stations ayant plus de 150 moniteurs, mais que certaines en ont jusqu'à 450. On peut donc remarquer une répartition assez inégale parmis les stations.
+
+#### "Kilomètres de Piste"
+Sur ce deuxième graphique, on remarque que la plupart des stations de ski compte moins de 10 km de piste. On peut aussi observer que cet histogramme est assez similaire à celui des moniteurs, ce qui est cohérent, étant donné qu'une grande station aura besoin de plus de moniteurs.
+
+#### "Remontées Mécaniques"
+Sur cet histogramme on peut observer le nombre de remontées mécanique par station. Encore une fois, le graphique est similaire aux précédents, et c'est logique que le nombre de remontés mécaniques soit fortement corrélé au cumul de kilomètres de piste de chaque station.
+
+#### "Snowparks"
+
+Ici, on peut observer le nombre de snowparks par station. La plupart des station en possède un seul ou aucun, mais il semble que certaines station investissent dans ce domaine, puisqu'il peut y avoir jusq'à 8 snowparks dans une seule station.
+
+### Section "Classement"
+
+Il est important de préciser que les données que l'ont observera ici représentent uniquement les skieurs qui se sont enregistrés pour faire des compétitions officielles de l'ESF, comme la flèche ou le chamois. Les skieurs occasionels qui ne font pas de compétitions ne sont donc pas pris en compte pour ces graphiques, et les francais allant skier dans des stations à l'étranger n'apparaissent pas non plus. Aussi, les skieurs n'ayant pas fait de compétition depuis plus de 5 ans perdent leur classement et ne sont donc pas affichés ici.
+
+#### "Carte des skieurs"
+
+Sur cette carte on peut observer le nombre de skieurs compétitifs enregistrés par département. La majeure partie des skieurs vient des Alpes, mais le département avec le plus de skieurs enregistrés est Paris, suivi de près par la Savoie (respectivement 1536 et 1506). On peut noter qu'il y a surprenamment peu de skieurs enregistrés pour les départements des autres massifs montagneux, même si l'Aveyron démontre qu'il y a des skieurs compétitifs dans le massif central.
+
+
+#### "Classement par catégorie"
+
+Cet histogramme permet d'observer le classement moyen par catégorie d'age. Les seniors sont les skieurs nés avant 2003, et les masters ceux nés avant 1990 non inclus. On peut remarquer que pour chaque catégorie d'age passée, le classement moyen s'améliore jusqu'à U21 (les moins de 21 ans), puis qu'après le classement remonte. Ce n'est pas affiché, mais on peut ajouter qu'il y a aussi beacoup moins d'enregistrés en Senior et Master. Cela peut être du à plusieurs facteurs:
+
+ - Les objectifs (flèche d'or, chamois d'or, etc ..) ont été atteints dans les catégories inférieures donc plus vraiment de raison de continuer ce type de compétition.
+ - Les meilleurs qui souhaitent continuer font un autre type de compétition organisé par la FFS (Fédération Francaise de Ski) voire par la FIS, et non par l'ESF.
+ - Une certaine catégorie d'age atteinte, il y a moins de vacances et donc moins de temps à accorder à la compétition.
+ - On pourrait penser à de nombreuses autres raisons, mais il ce n'est pas vraiment l'objectif ici.
+
 
 
 ## Developer Guide
