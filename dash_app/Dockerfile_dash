@@ -6,6 +6,8 @@ WORKDIR /app
 # Copiez les fichiers nécessaires dans le conteneur
 COPY requirements.txt .
 COPY main.py .
+COPY france.geojson .
+COPY graphs.py .
 
 # Installez les dépendances
 RUN pip install --no-cache-dir -r requirements.txt
