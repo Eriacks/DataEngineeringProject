@@ -91,7 +91,7 @@ class Esf2Spider(scrapy.Spider):
             document = {
                 'ID': codes[i],
                 'Nom': noms[i],
-                'Sexe': sexes[i],
+                 #'Sexe': sexes[i],
                 'Catégorie': categories[i],
                 'Nationalité': pays[i],
                 'Département': departements[i],

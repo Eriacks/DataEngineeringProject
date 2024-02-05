@@ -52,34 +52,81 @@ def update_checkbox_visibility(selected_tab):
      Input('checkbox-moniteurs-anglais', 'value')]
 )
 def update_ecoles_tab(selected_tab, checkbox_value):
-    if not checkbox_value:
-        if selected_tab == 'tab-1':
-            return dcc.Graph(figure=create_histo_moni(df_moni))
-        elif selected_tab == 'tab-2':
-            return dcc.Graph(figure=create_histo_km_piste(df_info))
-        elif selected_tab == 'tab-3':
-            return dcc.Graph(figure=create_histo_remonte(df_info))
-        elif selected_tab == 'tab-4':
-            return dcc.Graph(figure=create_histo_snowparks(df_info))
-        elif selected_tab == 'tab-5':
-            return dcc.Graph(figure=create_choropleth_map(collection_skieurs))
-        elif selected_tab == 'tab-6':
-            return dcc.Graph(figure=average_ranking_histogram(collection_skieurs))
-    else:
-        if selected_tab == 'tab-1':
-            return dcc.Graph(figure=create_histo_moni_anglais(df_moni))
-        elif selected_tab == 'tab-2':
-            return dcc.Graph(figure=create_histo_km_piste(df_info))
-        elif selected_tab == 'tab-3':
-            return dcc.Graph(figure=create_histo_remonte(df_info))
-        elif selected_tab == 'tab-4':
-            return dcc.Graph(figure=create_histo_snowparks(df_info))
-        elif selected_tab == 'tab-5':
-            return dcc.Graph(figure=create_choropleth_map(collection_skieurs))
-        elif selected_tab == 'tab-6':
-            return dcc.Graph(figure=average_ranking_histogram(collection_skieurs))
+    if selected_tab == 'tab-1':
+        if checkbox_value:
+            return html.Div([
+                dcc.Graph(id='graph1', figure=create_histo_moni_anglais(df_moni)),
+                html.Div(
+                    id='description1',
+                    children="On compte le nombre de moniteurs parlant anglais par station, et on regarde ici le nombre de stations contenant un certain nombre de moniteurs.",
+                    # Description du graphique
+                    style={'text-align': 'center', 'font-size': '15px', 'margin-top': '50px'}
+                    # Visuel de la description
+                )
+            ])
+        else:
+            return html.Div([
+                dcc.Graph(id='graph1', figure=create_histo_moni(df_moni)),
+                html.Div(
+                    id='description1',
+                    children="On compte le nombre de moniteurs par station, et on regarde ici le nombre de stations contenant un certain nombre de moniteurs.",
+                    # Description du graphique
+                    style={'text-align': 'center', 'font-size': '15px', 'margin-top': '50px'}
+                    # Visuel de la description
+                )
+            ])
+    elif selected_tab == 'tab-2':
+        return html.Div([
+            dcc.Graph(id='graph2', figure=create_histo_km_piste(df_info)),
+            html.Div(
+                id='description2',
+                children="Ce graphique montre le nombre de kilomètres de piste cumulés par station.",
+                # Description du graphique
+                style={'text-align': 'center', 'font-size': '15px', 'margin-top': '50px'}  # Visuel de la description
+            )
+        ])
+    elif selected_tab == 'tab-3':
+        return html.Div([
+            dcc.Graph(id='graph3', figure=create_histo_remonte(df_info)),
+            html.Div(
+                id='description3',
+                children="Ce graphique montre le nombre de remontées mécaniques par station.",
+                # Description du graphique
+                style={'text-align': 'center', 'font-size': '15px', 'margin-top': '50px'}  # Visuel de la description
+            )
+        ])
+    elif selected_tab == 'tab-4':
+        return html.Div([
+            dcc.Graph(id='graph4', figure=create_histo_snowparks(df_info)),
+            html.Div(
+                id='description4',
+                children="Ce graphique montre le sowparks par station.",  # Description du graphique
+                style={'text-align': 'center', 'font-size': '15px', 'margin-top': '50px'}  # Visuel de la description
+            )
+        ])
+    elif selected_tab == 'tab-5':
+        return html.Div([
+            dcc.Graph(id='graph5', figure=create_choropleth_map(collection_skieurs)),
+            html.Div(
+                id='description5',
+                children="Cette carte permet de d'observer le nombre de skieurs par région en France. Au survol, vous pouvez obtenir le nom de chaque région et son nombre précis de skieurs enregistrés.",
+                # Description du graphique
+                style={'text-align': 'center', 'font-size': '15px', 'margin-top': '50px'}  # Visuel de la description
+            )
+        ])
+    elif selected_tab == 'tab-6':
+        return html.Div([
+            dcc.Graph(id='graph6', figure=average_ranking_histogram(collection_skieurs)),
+            html.Div(
+                id='description6',
+                children="Cet histogramme montre le rang moyen pour chaque catégorie d'age.",
+                # Description du graphique
+                style={'text-align': 'center', 'font-size': '15px', 'margin-top': '50px'}  # Visuel de la description
+            )
+        ])
 
-# callback pour afficher les graphiques selon les tabs pour le sidebar classement
+
+    # callback pour afficher les graphiques selon les tabs pour le sidebar classement
 @app.callback(
     Output('classement-tabs-content', 'children'),
     [Input('classements-tabs', 'value')]
